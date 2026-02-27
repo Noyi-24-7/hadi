@@ -1,0 +1,12 @@
+export 'domain/entities/cart_item.dart';
+export 'domain/repositories/cart_repository.dart';
+export 'domain/usecases/add_to_cart.dart';
+export 'domain/usecases/clear_cart.dart';
+export 'domain/usecases/get_cart_items.dart';
+export 'domain/usecases/get_cart_summary.dart';
+export 'domain/usecases/remove_from_cart.dart';
+export 'domain/usecases/update_cart_quantity.dart';
+export 'data/models/cart_item_model.dart';
+export 'data/datasources/cart_local_data_source.dart';
+export 'data/repositories/cart_repository_impl.dart';
+export 'presentation/providers/cart_providers.dart';

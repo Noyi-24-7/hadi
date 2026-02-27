@@ -1,0 +1,1770 @@
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/supabase/supabase.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'preorders_page_model.dart';
+export 'preorders_page_model.dart';
+
+/// Page to show preorders, the ones that are pending, requested and tracking.
+///
+/// And preorder items, basically products that have been preordered.
+class PreordersPageWidget extends StatefulWidget {
+  const PreordersPageWidget({super.key});
+
+  static String routeName = 'Preorders_Page';
+  static String routePath = '/preordersPage';
+
+  @override
+  State<PreordersPageWidget> createState() => _PreordersPageWidgetState();
+}
+
+class _PreordersPageWidgetState extends State<PreordersPageWidget>
+    with TickerProviderStateMixin {
+  late PreordersPageModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => PreordersPageModel());
+
+    _model.tabBarController = TabController(
+      vsync: this,
+      length: 3,
+      initialIndex: 0,
+    )..addListener(() => safeSetState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<StoresRow>>(
+      future: StoresTable().querySingleRow(
+        queryFn: (q) => q.eqOrNull(
+          'owner_id',
+          currentUserUid,
+        ),
+      ),
+      builder: (context, snapshot) {
+        // Customize what your widget looks like when it's loading.
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: SpinKitWanderingCubes(
+                  color: FlutterFlowTheme.of(context).primary,
+                  size: 50.0,
+                ),
+              ),
+            ),
+          );
+        }
+        List<StoresRow> preordersPageStoresRowList = snapshot.data!;
+
+        final preordersPageStoresRow = preordersPageStoresRowList.isNotEmpty
+            ? preordersPageStoresRowList.first
+            : null;
+
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: SafeArea(
+              top: true,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Divider(
+                          height: 1.0,
+                          thickness: 1.0,
+                          color: Color(0xFFEAEDED),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 16.0, 20.0, 16.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              // A clickable row that's supposed to activate the "Side_Menu" component that would be used to navigate to some other pages by the user.
+                              Expanded(
+                                child: InkWell(
+                                  splashColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  hoverColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  onTap: () async {
+                                    scaffoldKey.currentState!.openDrawer();
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Icon(
+                                        Icons.menu,
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryText,
+                                        size: 24.0,
+                                      ),
+                                      Text(
+                                        'Menu',
+                                        style: FlutterFlowTheme.of(context)
+                                            .labelLarge
+                                            .override(
+                                              fontFamily: 'General Sans',
+                                              color: Color(0xFF1C2626),
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ].divide(SizedBox(width: 8.0)),
+                                  ),
+                                ),
+                              ),
+
+                              // Row containing the user's business name and their pfp or placeholder with the initial/letter avatar.
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  // name
+                                  Text(
+                                    valueOrDefault<String>(
+                                      preordersPageStoresRow?.name,
+                                      'Northing Official',
+                                    ),
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyLarge
+                                        .override(
+                                          fontFamily: 'General Sans',
+                                          letterSpacing: 0.0,
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                  ),
+                                  Container(
+                                    width: 24.0,
+                                    height: 24.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF5CA86),
+                                      borderRadius: BorderRadius.circular(24.0),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Placeholder with the initial/letter avatar.
+                                        Text(
+                                          functions.getInitials(
+                                              preordersPageStoresRow!.name!),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodySmall
+                                              .override(
+                                                fontFamily: 'General Sans',
+                                                fontSize: 10.0,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ].divide(SizedBox(width: 8.0)),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          height: 1.0,
+                          thickness: 1.0,
+                          color: Color(0xFFEAEDED),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding:
+                        EdgeInsetsDirectional.fromSTEB(20.0, 0.0, 0.0, 0.0),
+                    child: Text(
+                      'Pre-Orders',
+                      style: FlutterFlowTheme.of(context).titleLarge.override(
+                            fontFamily: 'General Sans',
+                            color: Color(0xFF131919),
+                            letterSpacing: 0.0,
+                          ),
+                    ),
+                  ),
+                  Flexible(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 0.0, 20.0, 0.0),
+                          child: Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF5F6F9),
+                              borderRadius: BorderRadius.circular(16.0),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.all(5.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                children: [
+                                  // Button to toggle preorders to show
+                                  Expanded(
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        _model.isPreOrders = true;
+                                        _model.isPreOrderItems = false;
+                                        safeSetState(() {});
+                                      },
+                                      text: 'Pre-Orders',
+                                      options: FFButtonOptions(
+                                        height: 52.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0.0, 0.0, 0.0, 0.0),
+                                        color: valueOrDefault<Color>(
+                                          _model.isPreOrders == true
+                                              ? Color(0xFF363232)
+                                              : Color(0xFFF5F6F9),
+                                          Color(0xFF363232),
+                                        ),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'General Sans',
+                                              color: valueOrDefault<Color>(
+                                                _model.isPreOrders == true
+                                                    ? Colors.white
+                                                    : Color(0xFF363232),
+                                                Colors.white,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                      ),
+                                    ),
+                                  ),
+
+                                  // Button to toggle the preorder items, the products to show.
+                                  Expanded(
+                                    child: FFButtonWidget(
+                                      onPressed: () async {
+                                        _model.isPreOrders = false;
+                                        _model.isPreOrderItems = true;
+                                        safeSetState(() {});
+                                      },
+                                      text: 'Pre-Order Items',
+                                      options: FFButtonOptions(
+                                        height: 52.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            16.0, 0.0, 16.0, 0.0),
+                                        iconPadding:
+                                            EdgeInsetsDirectional.fromSTEB(
+                                                0.0, 0.0, 0.0, 0.0),
+                                        color: valueOrDefault<Color>(
+                                          _model.isPreOrderItems == true
+                                              ? Color(0xFF363232)
+                                              : Color(0xFFF5F6F9),
+                                          Color(0xFF363232),
+                                        ),
+                                        textStyle: FlutterFlowTheme.of(context)
+                                            .titleSmall
+                                            .override(
+                                              fontFamily: 'General Sans',
+                                              color: valueOrDefault<Color>(
+                                                _model.isPreOrderItems == true
+                                                    ? Colors.white
+                                                    : Color(0xFF363232),
+                                                Colors.white,
+                                              ),
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                        elevation: 0.0,
+                                        borderRadius:
+                                            BorderRadius.circular(15.0),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Builder(
+                            builder: (context) {
+                              if (_model.isPreOrders == true) {
+                                return Column(
+                                  children: [
+                                    Align(
+                                      alignment: Alignment(0.0, 0),
+                                      child: TabBar(
+                                        labelColor: Color(0xFF363232),
+                                        unselectedLabelColor: Color(0xFF515151),
+                                        labelStyle: FlutterFlowTheme.of(context)
+                                            .titleMedium
+                                            .override(
+                                              fontFamily: 'General Sans',
+                                              fontSize: 14.0,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                        unselectedLabelStyle:
+                                            FlutterFlowTheme.of(context)
+                                                .titleMedium
+                                                .override(
+                                                  fontFamily: 'General Sans',
+                                                  fontSize: 14.0,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                        indicatorColor: Color(0xFF666666),
+                                        indicatorWeight: 2.0,
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            20.0, 8.0, 20.0, 0.0),
+                                        tabs: [
+                                          // Showing items that are pending item pickup.
+                                          Tab(
+                                            text: 'Pending',
+                                          ),
+
+                                          // Showing items that pickup has been requested.
+                                          Tab(
+                                            text: 'Requested',
+                                          ),
+
+                                          // Showing the items being tracked.
+                                          Tab(
+                                            text: 'Tracking',
+                                          ),
+                                        ],
+                                        controller: _model.tabBarController,
+                                        onTap: (i) async {
+                                          [
+                                            () async {},
+                                            () async {},
+                                            () async {}
+                                          ][i]();
+                                        },
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: TabBarView(
+                                        controller: _model.tabBarController,
+                                        children: [
+                                          Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Conditional showing between the empty state and cards that would show pending items.
+                                              Expanded(
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    if (_model.isEmpty ==
+                                                        false) {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20.0,
+                                                                          0.0,
+                                                                          20.0,
+                                                                          0.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Divider(
+                                                                    height: 1.0,
+                                                                    thickness:
+                                                                        1.0,
+                                                                    color: Color(
+                                                                        0xFFF0F0F0),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20.0,
+                                                                          16.0,
+                                                                          20.0,
+                                                                          0.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  // Item Preodered.
+                                                                  Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5.0),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              10.0),
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        children:
+                                                                            [
+                                                                          Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            children:
+                                                                                [
+                                                                              ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(8.0),
+                                                                                child: Image.network(
+                                                                                  'https://picsum.photos/seed/248/600',
+                                                                                  width: 40.0,
+                                                                                  height: 40.0,
+                                                                                  fit: BoxFit.cover,
+                                                                                ),
+                                                                              ),
+                                                                              Column(
+                                                                                mainAxisSize: MainAxisSize.max,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Drake CLB Airforce 1s ',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                              fontFamily: 'General Sans',
+                                                                                              color: Color(0xFF82818D),
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Text(
+                                                                                        'x2',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                              fontFamily: 'General Sans',
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'NGN 80,000',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          color: Color(0xFF82818D),
+                                                                                          letterSpacing: 0.0,
+                                                                                        ),
+                                                                                  ),
+                                                                                ].divide(SizedBox(height: 2.0)),
+                                                                              ),
+                                                                            ].divide(SizedBox(width: 5.0)),
+                                                                          ),
+                                                                          Divider(
+                                                                            height:
+                                                                                1.0,
+                                                                            thickness:
+                                                                                1.0,
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).alternate,
+                                                                          ),
+
+                                                                          // Button to request item pickup
+                                                                          Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                0.0,
+                                                                                2.0,
+                                                                                0.0,
+                                                                                0.0),
+                                                                            child:
+                                                                                FFButtonWidget(
+                                                                              onPressed: () {
+                                                                                print('Button pressed ...');
+                                                                              },
+                                                                              text: 'Request Item Pickup',
+                                                                              options: FFButtonOptions(
+                                                                                height: 40.0,
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
+                                                                                iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                                color: Color(0xFF645E82),
+                                                                                textStyle: FlutterFlowTheme.of(context).labelMedium.override(
+                                                                                      fontFamily: 'General Sans',
+                                                                                      color: Colors.white,
+                                                                                      letterSpacing: 0.0,
+                                                                                      lineHeight: 1.142,
+                                                                                    ),
+                                                                                elevation: 0.0,
+                                                                                borderRadius: BorderRadius.circular(24.0),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ].divide(SizedBox(height: 8.0)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          128.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/Empty_Pre-Orders.png',
+                                                                  width: 220.0,
+                                                                  height: 160.0,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'You do not have any pre-orders yet',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'General Sans',
+                                                                    color: Color(
+                                                                        0xFF515151),
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
+                                                          ].divide(SizedBox(
+                                                              height: 32.0)),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Expanded(
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    if (_model.isEmpty ==
+                                                        false) {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20.0,
+                                                                          0.0,
+                                                                          20.0,
+                                                                          0.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  Divider(
+                                                                    height: 1.0,
+                                                                    thickness:
+                                                                        1.0,
+                                                                    color: Color(
+                                                                        0xFFF0F0F0),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          20.0,
+                                                                          16.0,
+                                                                          20.0,
+                                                                          0.0),
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                children: [
+                                                                  // Item that's been requested card
+                                                                  Container(
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5.0),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding:
+                                                                          EdgeInsets.all(
+                                                                              10.0),
+                                                                      child:
+                                                                          Column(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        children:
+                                                                            [
+                                                                          Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            children:
+                                                                                [
+                                                                              ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(8.0),
+                                                                                child: Image.network(
+                                                                                  'https://picsum.photos/seed/248/600',
+                                                                                  width: 40.0,
+                                                                                  height: 40.0,
+                                                                                  fit: BoxFit.cover,
+                                                                                ),
+                                                                              ),
+                                                                              Column(
+                                                                                mainAxisSize: MainAxisSize.max,
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    mainAxisSize: MainAxisSize.max,
+                                                                                    children: [
+                                                                                      Text(
+                                                                                        'Drake CLB Airforce 1s ',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                              fontFamily: 'General Sans',
+                                                                                              color: Color(0xFF82818D),
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                      ),
+                                                                                      Text(
+                                                                                        'x2',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                              fontFamily: 'General Sans',
+                                                                                              letterSpacing: 0.0,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'NGN 80,000',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          color: Color(0xFF82818D),
+                                                                                          letterSpacing: 0.0,
+                                                                                        ),
+                                                                                  ),
+                                                                                ].divide(SizedBox(height: 2.0)),
+                                                                              ),
+                                                                            ].divide(SizedBox(width: 5.0)),
+                                                                          ),
+                                                                          Divider(
+                                                                            height:
+                                                                                1.0,
+                                                                            thickness:
+                                                                                1.0,
+                                                                            color:
+                                                                                FlutterFlowTheme.of(context).alternate,
+                                                                          ),
+                                                                          Row(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            children: [
+                                                                              Expanded(
+                                                                                child: Row(
+                                                                                  mainAxisSize: MainAxisSize.max,
+                                                                                  children: [
+                                                                                    Icon(
+                                                                                      Icons.info_outline_rounded,
+                                                                                      color: Color(0xFF656161),
+                                                                                      size: 10.0,
+                                                                                    ),
+
+                                                                                    // Text to show how long ago the request has been sent
+                                                                                    Text(
+                                                                                      'Requested 3 business days ago',
+                                                                                      style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                            fontFamily: 'General Sans',
+                                                                                            color: Color(0xFF656161),
+                                                                                            letterSpacing: 0.0,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                          ),
+                                                                                    ),
+                                                                                  ].divide(SizedBox(width: 5.0)),
+                                                                                ),
+                                                                              ),
+
+                                                                              // Button to resend request.
+                                                                              Padding(
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(0.0, 2.0, 0.0, 0.0),
+                                                                                child: FFButtonWidget(
+                                                                                  onPressed: () {
+                                                                                    print('Button pressed ...');
+                                                                                  },
+                                                                                  text: 'Resend request',
+                                                                                  options: FFButtonOptions(
+                                                                                    height: 40.0,
+                                                                                    padding: EdgeInsetsDirectional.fromSTEB(16.0, 12.0, 16.0, 12.0),
+                                                                                    iconPadding: EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                                                                    color: Color(0xFFB75088),
+                                                                                    textStyle: FlutterFlowTheme.of(context).labelMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          color: Colors.white,
+                                                                                          letterSpacing: 0.0,
+                                                                                          lineHeight: 1.142,
+                                                                                        ),
+                                                                                    elevation: 0.0,
+                                                                                    borderRadius: BorderRadius.circular(24.0),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ].divide(SizedBox(height: 8.0)),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ].divide(SizedBox(
+                                                                    height:
+                                                                        6.0)),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          128.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/Empty_Pre-Orders.png',
+                                                                  width: 220.0,
+                                                                  height: 160.0,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'You do not have any pre-orders yet',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'General Sans',
+                                                                    color: Color(
+                                                                        0xFF515151),
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
+                                                          ].divide(SizedBox(
+                                                              height: 32.0)),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Expanded(
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    if (_model.isEmpty ==
+                                                        false) {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      20.0,
+                                                                      16.0,
+                                                                      20.0,
+                                                                      0.0),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              // Item being tracked card
+                                                              Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5.0),
+                                                                ),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              10.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        children:
+                                                                            [
+                                                                          ClipRRect(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8.0),
+                                                                            child:
+                                                                                Image.network(
+                                                                              'https://picsum.photos/seed/248/600',
+                                                                              width: 40.0,
+                                                                              height: 40.0,
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          ),
+                                                                          Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children:
+                                                                                [
+                                                                              Row(
+                                                                                mainAxisSize: MainAxisSize.max,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    'Drake CLB Airforce 1s ',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          color: Color(0xFF82818D),
+                                                                                          letterSpacing: 0.0,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'x2',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          letterSpacing: 0.0,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Text(
+                                                                                'NGN 80,000',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                      fontFamily: 'General Sans',
+                                                                                      color: Color(0xFF82818D),
+                                                                                      letterSpacing: 0.0,
+                                                                                    ),
+                                                                              ),
+                                                                            ].divide(SizedBox(height: 2.0)),
+                                                                          ),
+                                                                        ].divide(SizedBox(width: 5.0)),
+                                                                      ),
+                                                                      Divider(
+                                                                        height:
+                                                                            1.0,
+                                                                        thickness:
+                                                                            1.0,
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .alternate,
+                                                                      ),
+
+                                                                      // Row showing the status of the tracking.
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            10.0,
+                                                                            0.0,
+                                                                            10.0),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children:
+                                                                              [
+                                                                            ClipRRect(
+                                                                              borderRadius: BorderRadius.circular(8.0),
+                                                                              child: Image.asset(
+                                                                                'assets/images/Frame.png',
+                                                                                width: 16.0,
+                                                                                height: 16.0,
+                                                                                fit: BoxFit.contain,
+                                                                              ),
+                                                                            ),
+                                                                            Text(
+                                                                              'Delivery in progress',
+                                                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                    fontFamily: 'General Sans',
+                                                                                    color: Color(0xFFFF8A48),
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                            ),
+                                                                          ].divide(SizedBox(width: 5.0)),
+                                                                        ),
+                                                                      ),
+                                                                    ].divide(SizedBox(
+                                                                        height:
+                                                                            8.0)),
+                                                                  ),
+                                                                ),
+                                                              ),
+
+                                                              // Item being tracked card
+                                                              Container(
+                                                                width: double
+                                                                    .infinity,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5.0),
+                                                                ),
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              10.0),
+                                                                  child: Column(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .max,
+                                                                    children: [
+                                                                      Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                        children:
+                                                                            [
+                                                                          ClipRRect(
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8.0),
+                                                                            child:
+                                                                                Image.network(
+                                                                              'https://picsum.photos/seed/248/600',
+                                                                              width: 40.0,
+                                                                              height: 40.0,
+                                                                              fit: BoxFit.cover,
+                                                                            ),
+                                                                          ),
+                                                                          Column(
+                                                                            mainAxisSize:
+                                                                                MainAxisSize.max,
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children:
+                                                                                [
+                                                                              Row(
+                                                                                mainAxisSize: MainAxisSize.max,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    'Drake CLB Airforce 1s ',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          color: Color(0xFF82818D),
+                                                                                          letterSpacing: 0.0,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    'x2',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontFamily: 'General Sans',
+                                                                                          letterSpacing: 0.0,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                        ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Text(
+                                                                                'NGN 80,000',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                      fontFamily: 'General Sans',
+                                                                                      color: Color(0xFF82818D),
+                                                                                      letterSpacing: 0.0,
+                                                                                    ),
+                                                                              ),
+                                                                            ].divide(SizedBox(height: 2.0)),
+                                                                          ),
+                                                                        ].divide(SizedBox(width: 5.0)),
+                                                                      ),
+                                                                      Divider(
+                                                                        height:
+                                                                            1.0,
+                                                                        thickness:
+                                                                            1.0,
+                                                                        color: FlutterFlowTheme.of(context)
+                                                                            .alternate,
+                                                                      ),
+
+                                                                      // Row showing the status of the tracking.
+                                                                      Padding(
+                                                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                                                            0.0,
+                                                                            10.0,
+                                                                            0.0,
+                                                                            10.0),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children:
+                                                                              [
+                                                                            ClipRRect(
+                                                                              borderRadius: BorderRadius.circular(8.0),
+                                                                              child: Image.asset(
+                                                                                'assets/images/Frame-1.png',
+                                                                                width: 16.0,
+                                                                                height: 16.0,
+                                                                                fit: BoxFit.contain,
+                                                                              ),
+                                                                            ),
+                                                                            Text(
+                                                                              'Delivered',
+                                                                              style: FlutterFlowTheme.of(context).bodySmall.override(
+                                                                                    fontFamily: 'General Sans',
+                                                                                    color: Color(0xFF3FCB90),
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                  ),
+                                                                            ),
+                                                                          ].divide(SizedBox(width: 5.0)),
+                                                                        ),
+                                                                      ),
+                                                                    ].divide(SizedBox(
+                                                                        height:
+                                                                            8.0)),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ].divide(SizedBox(
+                                                                height: 6.0)),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    } else {
+                                                      return Container(
+                                                        width: double.infinity,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF8F8F8),
+                                                        ),
+                                                        child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.max,
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Padding(
+                                                              padding:
+                                                                  EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                          0.0,
+                                                                          128.0,
+                                                                          0.0,
+                                                                          0.0),
+                                                              child: ClipRRect(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8.0),
+                                                                child:
+                                                                    Image.asset(
+                                                                  'assets/images/Empty_Pre-Orders.png',
+                                                                  width: 220.0,
+                                                                  height: 160.0,
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            Text(
+                                                              'You do not have any pre-orders yet',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'General Sans',
+                                                                    color: Color(
+                                                                        0xFF515151),
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
+                                                          ].divide(SizedBox(
+                                                              height: 32.0)),
+                                                        ),
+                                                      );
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              } else {
+                                return Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      0.0, 24.0, 0.0, 0.0),
+                                  child: SingleChildScrollView(
+                                    primary: false,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        // Gridview showing all the products that have been preordered.
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 40.0),
+                                          child: GridView(
+                                            padding: EdgeInsets.zero,
+                                            gridDelegate:
+                                                SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 2,
+                                              crossAxisSpacing: 24.0,
+                                              mainAxisSpacing: 24.0,
+                                              childAspectRatio: 0.72,
+                                            ),
+                                            shrinkWrap: true,
+                                            scrollDirection: Axis.vertical,
+                                            children: [
+                                              // Product item that has been preordered.
+                                              Container(
+                                                decoration: BoxDecoration(),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      height: 181.0,
+                                                      decoration: BoxDecoration(
+                                                        color: FlutterFlowTheme
+                                                                .of(context)
+                                                            .secondaryBackground,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        child: Image.network(
+                                                          'https://picsum.photos/seed/773/600',
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          'Black Mini Jumper',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'General Sans',
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                lineHeight:
+                                                                    0.88,
+                                                              ),
+                                                        ),
+                                                        Text(
+                                                          'NGN37,000',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'General Sans',
+                                                                color: Color(
+                                                                    0xFF645E82),
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                      ].divide(SizedBox(
+                                                          height: 8.0)),
+                                                    ),
+                                                  ].divide(
+                                                      SizedBox(height: 5.0)),
+                                                ),
+                                              ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 181.0,
+                                                    decoration: BoxDecoration(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        'https://picsum.photos/seed/773/600',
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Black Mini Jumper',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              lineHeight: 0.88,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'NGN37,000',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF645E82),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                    ].divide(
+                                                        SizedBox(height: 8.0)),
+                                                  ),
+                                                ].divide(SizedBox(height: 5.0)),
+                                              ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 181.0,
+                                                    decoration: BoxDecoration(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        'https://picsum.photos/seed/773/600',
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Black Mini Jumper',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              lineHeight: 0.88,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'NGN37,000',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF645E82),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                    ].divide(
+                                                        SizedBox(height: 8.0)),
+                                                  ),
+                                                ].divide(SizedBox(height: 5.0)),
+                                              ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 181.0,
+                                                    decoration: BoxDecoration(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        'https://picsum.photos/seed/773/600',
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Black Mini Jumper',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              lineHeight: 0.88,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'NGN37,000',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF645E82),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                    ].divide(
+                                                        SizedBox(height: 8.0)),
+                                                  ),
+                                                ].divide(SizedBox(height: 5.0)),
+                                              ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 181.0,
+                                                    decoration: BoxDecoration(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        'https://picsum.photos/seed/773/600',
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Black Mini Jumper',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              lineHeight: 0.88,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'NGN37,000',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF645E82),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                    ].divide(
+                                                        SizedBox(height: 8.0)),
+                                                  ),
+                                                ].divide(SizedBox(height: 5.0)),
+                                              ),
+                                              Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    width: double.infinity,
+                                                    height: 181.0,
+                                                    decoration: BoxDecoration(
+                                                      color: FlutterFlowTheme
+                                                              .of(context)
+                                                          .secondaryBackground,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                    ),
+                                                    child: ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
+                                                      child: Image.network(
+                                                        'https://picsum.photos/seed/773/600',
+                                                        width: double.infinity,
+                                                        height: double.infinity,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        'Black Mini Jumper',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodyMedium
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              lineHeight: 0.88,
+                                                            ),
+                                                      ),
+                                                      Text(
+                                                        'NGN37,000',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF645E82),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                    ].divide(
+                                                        SizedBox(height: 8.0)),
+                                                  ),
+                                                ].divide(SizedBox(height: 5.0)),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ].divide(SizedBox(height: 32.0)),
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ].divide(SizedBox(height: 16.0)),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

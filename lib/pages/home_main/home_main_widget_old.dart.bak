@@ -1,0 +1,1058 @@
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/supabase/supabase.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/upload_data.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import '/index.dart';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'home_main_model.dart';
+export 'home_main_model.dart';
+
+/// The main storefront home page, that merchants would get to when they've
+/// finished all the things they need to do for onboarding.
+///
+/// All the information would be gotten from Supabase.
+///
+/// They would be able to see their header image, a link to the store they can
+/// share where buyers would be able to get and open on their browser to see
+/// the merchant's store on their end.
+///
+/// They can see a list of their products as well as a button to add new
+/// product.
+///
+/// The page has conditionals to show states of activeness depending on if
+/// they've added a header or products.
+class HomeMainWidget extends StatefulWidget {
+  const HomeMainWidget({super.key});
+
+  static String routeName = 'Home_Main';
+  static String routePath = '/homeMain';
+
+  @override
+  State<HomeMainWidget> createState() => _HomeMainWidgetState();
+}
+
+class _HomeMainWidgetState extends State<HomeMainWidget> {
+  late HomeMainModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => HomeMainModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<StoresRow>>(
+      future: StoresTable().querySingleRow(
+        queryFn: (q) => q.eqOrNull(
+          'owner_id',
+          currentUserUid,
+        ),
+      ),
+      builder: (context, snapshot) {
+        // Customize what your widget looks like when it's loading.
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: SpinKitWanderingCubes(
+                  color: FlutterFlowTheme.of(context).primary,
+                  size: 50.0,
+                ),
+              ),
+            ),
+          );
+        }
+        List<StoresRow> homeMainStoresRowList = snapshot.data!;
+
+        final homeMainStoresRow = homeMainStoresRowList.isNotEmpty
+            ? homeMainStoresRowList.first
+            : null;
+
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: SafeArea(
+              top: true,
+              child: Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: Color(0xFFEAEDED),
+                              ),
+                              Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    20.0, 16.0, 20.0, 16.0),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    // A clickable row that's supposed to activate the "Side_Menu" component that would be used to navigate to some other pages by the user.
+                                    Expanded(
+                                      child: InkWell(
+                                        splashColor: Colors.transparent,
+                                        focusColor: Colors.transparent,
+                                        hoverColor: Colors.transparent,
+                                        highlightColor: Colors.transparent,
+                                        onTap: () async {
+                                          scaffoldKey.currentState!
+                                              .openDrawer();
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Icon(
+                                              Icons.menu,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryText,
+                                              size: 24.0,
+                                            ),
+                                            Text(
+                                              'Menu',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .labelLarge
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Color(0xFF1C2626),
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                          ].divide(SizedBox(width: 8.0)),
+                                        ),
+                                      ),
+                                    ),
+
+                                    // Row containing the user's business name and their pfp or placeholder with the initial/letter avatar.
+                                    Row(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        // name
+                                        Text(
+                                          valueOrDefault<String>(
+                                            homeMainStoresRow?.name,
+                                            'Northing Official',
+                                          ),
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyLarge
+                                              .override(
+                                                fontFamily: 'General Sans',
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w300,
+                                              ),
+                                        ),
+                                        Container(
+                                          width: 24.0,
+                                          height: 24.0,
+                                          decoration: BoxDecoration(
+                                            color: Color(0xFFF5CA86),
+                                            borderRadius:
+                                                BorderRadius.circular(24.0),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              // Placeholder with the initial/letter avatar.
+                                              Text(
+                                                functions.getInitials(
+                                                    homeMainStoresRow!.name!),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodySmall
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          fontSize: 10.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ].divide(SizedBox(width: 8.0)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Divider(
+                                height: 1.0,
+                                thickness: 1.0,
+                                color: Color(0xFFEAEDED),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 0.0, 0.0, 0.0),
+                          child: Text(
+                            'Store Front',
+                            style: FlutterFlowTheme.of(context)
+                                .titleLarge
+                                .override(
+                                  fontFamily: 'General Sans',
+                                  color: Color(0xFF131919),
+                                  letterSpacing: 0.0,
+                                ),
+                          ),
+                        ),
+
+                        // Conditional that would check if the user has a header image set and show it, if not should default to the empty state.
+                        Builder(
+                          builder: (context) {
+                            if (homeMainStoresRow.bannerUrl != null &&
+                                homeMainStoresRow.bannerUrl != '') {
+                              return
+                                  // Header image container.
+                                  Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height: 95.0,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF8F8F8),
+                                    border: Border.all(
+                                      color: Color(0xFFE3E3E3),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      // Header Image.
+                                      ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(0.0),
+                                        child: Image.network(
+                                          homeMainStoresRow.bannerUrl!,
+                                          width: double.infinity,
+                                          height: double.infinity,
+                                          fit: BoxFit.contain,
+                                        ),
+                                      ),
+
+                                      // Button where the user can click and change the image to another.
+                                      Align(
+                                        alignment:
+                                            AlignmentDirectional(1.0, 1.0),
+                                        child: Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 8.0, 8.0),
+                                          child: FFButtonWidget(
+                                            onPressed: () async {
+                                              final selectedMedia =
+                                                  await selectMediaWithSourceBottomSheet(
+                                                context: context,
+                                                storageFolderPath:
+                                                    'stores/${homeMainStoresRow.id}/banner',
+                                                allowPhoto: true,
+                                              );
+                                              if (selectedMedia != null &&
+                                                  selectedMedia.every((m) =>
+                                                      validateFileFormat(
+                                                          m.storagePath,
+                                                          context))) {
+                                                safeSetState(() => _model
+                                                        .isDataUploading_uploadData4xq =
+                                                    true);
+                                                var selectedUploadedFiles =
+                                                    <FFUploadedFile>[];
+
+                                                var downloadUrls = <String>[];
+                                                try {
+                                                  selectedUploadedFiles =
+                                                      selectedMedia
+                                                          .map((m) =>
+                                                              FFUploadedFile(
+                                                                name: m
+                                                                    .storagePath
+                                                                    .split('/')
+                                                                    .last,
+                                                                bytes: m.bytes,
+                                                                height: m
+                                                                    .dimensions
+                                                                    ?.height,
+                                                                width: m
+                                                                    .dimensions
+                                                                    ?.width,
+                                                                blurHash:
+                                                                    m.blurHash,
+                                                                originalFilename:
+                                                                    m.originalFilename,
+                                                              ))
+                                                          .toList();
+
+                                                  downloadUrls =
+                                                      await uploadSupabaseStorageFiles(
+                                                    bucketName: 'store_banners',
+                                                    selectedFiles:
+                                                        selectedMedia,
+                                                  );
+                                                } finally {
+                                                  _model.isDataUploading_uploadData4xq =
+                                                      false;
+                                                }
+                                                if (selectedUploadedFiles
+                                                            .length ==
+                                                        selectedMedia.length &&
+                                                    downloadUrls.length ==
+                                                        selectedMedia.length) {
+                                                  safeSetState(() {
+                                                    _model.uploadedLocalFile_uploadData4xq =
+                                                        selectedUploadedFiles
+                                                            .first;
+                                                    _model.uploadedFileUrl_uploadData4xq =
+                                                        downloadUrls.first;
+                                                  });
+                                                } else {
+                                                  safeSetState(() {});
+                                                  return;
+                                                }
+                                              }
+
+                                              _model.updateBanner =
+                                                  await StoresTable().update(
+                                                data: {
+                                                  'banner_url': _model
+                                                      .uploadedFileUrl_uploadData4xq,
+                                                },
+                                                matchingRows: (rows) => rows,
+                                                returnRows: true,
+                                              );
+                                              safeSetState(() => _model
+                                                  .requestCompleter = null);
+                                              await _model
+                                                  .waitForRequestCompleted();
+
+                                              safeSetState(() {});
+                                            },
+                                            text: 'Change Header',
+                                            options: FFButtonOptions(
+                                              height: 32.0,
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(
+                                                      16.0, 0.0, 16.0, 0.0),
+                                              iconPadding: EdgeInsetsDirectional
+                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
+                                              color: Colors.white,
+                                              textStyle: FlutterFlowTheme.of(
+                                                      context)
+                                                  .labelSmall
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Color(0xFF171719),
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                              elevation: 0.0,
+                                              borderRadius:
+                                                  BorderRadius.circular(24.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return
+                                  // Empty state container. If the container is tapped they'll be prompted to upload an image.
+                                  Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    0.0, 0.0, 0.0, 8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF8F8F8),
+                                    border: Border.all(
+                                      color: Color(0xFFE3E3E3),
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0.0, 26.0, 0.0, 26.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      children: [
+                                        Container(
+                                          width: 25.0,
+                                          height: 25.0,
+                                          decoration: BoxDecoration(
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(0.0),
+                                                child: Image.asset(
+                                                  'assets/images/upload_1.png',
+                                                  width: 24.6,
+                                                  height: 24.6,
+                                                  fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              'Tap here ',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodySmall
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Color(0xFFA55954),
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                            ),
+                                            Text(
+                                              'to upload header image',
+                                              style: FlutterFlowTheme.of(
+                                                      context)
+                                                  .bodySmall
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Color(0xFF384A62),
+                                                    letterSpacing: 0.0,
+                                                  ),
+                                            ),
+                                          ],
+                                        ),
+                                      ].divide(SizedBox(height: 2.0)),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              20.0, 0.0, 20.0, 30.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Share Storefront Link',
+                                style: FlutterFlowTheme.of(context)
+                                    .bodyMedium
+                                    .override(
+                                      fontFamily: 'General Sans',
+                                      color: Color(0xFF2A3535),
+                                      letterSpacing: 0.0,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                              ),
+
+                              // Link to store container.
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFBFBF9),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      10.0, 16.0, 10.0, 16.0),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      // Link to the store that buyers would open on their browser to buy products.
+                                      Text(
+                                        'https://hadi.northing.shop/${homeMainStoresRow.slug}',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodySmall
+                                            .override(
+                                              fontFamily: 'General Sans',
+                                              color: Color(0xFF797979),
+                                              fontSize: 13.0,
+                                              letterSpacing: 0.0,
+                                            ),
+                                      ),
+
+                                      // Copy button, that would allow merchants to copy and share they link to their store for buyers.
+                                      FFButtonWidget(
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(
+                                              text:
+                                                  'https://hadi.northing.shop/${homeMainStoresRow.slug}'));
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                'Copied',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryText,
+                                                          letterSpacing: 0.0,
+                                                        ),
+                                              ),
+                                              duration:
+                                                  Duration(milliseconds: 4000),
+                                              backgroundColor:
+                                                  FlutterFlowTheme.of(context)
+                                                      .secondaryBackground,
+                                            ),
+                                          );
+                                        },
+                                        text: 'Copy ',
+                                        options: FFButtonOptions(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  10.0, 5.0, 10.0, 5.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: Color(0xFFF4F0E7),
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Color(0xFF2A3535),
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w500,
+                                                    lineHeight: 1.0,
+                                                  ),
+                                          elevation: 0.0,
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ].divide(SizedBox(height: 8.0)),
+                          ),
+                        ),
+
+                        // Conditional that would show either the products or the empty state.
+                        FutureBuilder<List<ProductsRow>>(
+                          future: ProductsTable().queryRows(
+                            queryFn: (q) => q
+                                .eqOrNull(
+                                  'store_id',
+                                  homeMainStoresRow.id,
+                                )
+                                .eqOrNull(
+                                  'is_active',
+                                  true,
+                                ),
+                          ),
+                          builder: (context, snapshot) {
+                            // Customize what your widget looks like when it's loading.
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: SizedBox(
+                                  width: 50.0,
+                                  height: 50.0,
+                                  child: SpinKitWanderingCubes(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 50.0,
+                                  ),
+                                ),
+                              );
+                            }
+                            List<ProductsRow>
+                                conditionalBuilderProductsProductsRowList =
+                                snapshot.data!;
+
+                            return Builder(
+                              builder: (context) {
+                                if ((homeMainStoresRow
+                                            .storefrontSetupComplete ==
+                                        true) &&
+                                    (conditionalBuilderProductsProductsRowList
+                                        .isNotEmpty)) {
+                                  return
+                                      // Grid of products that the user has added, gotten from Supabase.
+                                      Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        20.0, 0.0, 20.0, 120.0),
+                                    child: FutureBuilder<List<ProductsRow>>(
+                                      future: ProductsTable().queryRows(
+                                        queryFn: (q) => q
+                                            .eqOrNull(
+                                              'store_id',
+                                              homeMainStoresRow.id,
+                                            )
+                                            .eqOrNull(
+                                              'is_active',
+                                              true,
+                                            ),
+                                      ),
+                                      builder: (context, snapshot) {
+                                        // Customize what your widget looks like when it's loading.
+                                        if (!snapshot.hasData) {
+                                          return Center(
+                                            child: SizedBox(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              child: SpinKitWanderingCubes(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
+                                                size: 50.0,
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        List<ProductsRow>
+                                            gridViewProductsRowList =
+                                            snapshot.data!;
+
+                                        return GridView.builder(
+                                          padding: EdgeInsets.zero,
+                                          gridDelegate:
+                                              SliverGridDelegateWithFixedCrossAxisCount(
+                                            crossAxisCount: 2,
+                                            crossAxisSpacing: 24.0,
+                                            mainAxisSpacing: 24.0,
+                                            childAspectRatio: 0.72,
+                                          ),
+                                          shrinkWrap: true,
+                                          scrollDirection: Axis.vertical,
+                                          itemCount:
+                                              gridViewProductsRowList.length,
+                                          itemBuilder:
+                                              (context, gridViewIndex) {
+                                            final gridViewProductsRow =
+                                                gridViewProductsRowList[
+                                                    gridViewIndex];
+                                            return
+                                                // Product item container, that if when clicked, they'll navigate to the "Product_Details_Page" page to be able to see the product's details.
+                                                InkWell(
+                                              splashColor: Colors.transparent,
+                                              focusColor: Colors.transparent,
+                                              hoverColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              onTap: () async {
+                                                context.pushNamed(
+                                                  ProductDetailsPageWidget
+                                                      .routeName,
+                                                  queryParameters: {
+                                                    'productId': serializeParam(
+                                                      gridViewProductsRow.id,
+                                                      ParamType.String,
+                                                    ),
+                                                    'storeSlug': serializeParam(
+                                                      homeMainStoresRow,
+                                                      ParamType.SupabaseRow,
+                                                    ),
+                                                  }.withoutNulls,
+                                                );
+                                              },
+                                              child: Container(
+                                                decoration: BoxDecoration(),
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      width: double.infinity,
+                                                      height: 181.0,
+                                                      decoration: BoxDecoration(
+                                                        color: FlutterFlowTheme
+                                                                .of(context)
+                                                            .secondaryBackground,
+                                                      ),
+                                                      child:
+                                                          // Product image gotten from Supabase.
+                                                          ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8.0),
+                                                        child: Image.network(
+                                                          'https://picsum.photos/seed/773/600',
+                                                          width:
+                                                              double.infinity,
+                                                          height:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Product name gotten from Supabase.
+                                                        Text(
+                                                          gridViewProductsRow
+                                                              .name,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'General Sans',
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                lineHeight:
+                                                                    0.88,
+                                                              ),
+                                                        ),
+
+                                                        // Product Price gotten from Supabase.
+                                                        Text(
+                                                          gridViewProductsRow
+                                                              .price
+                                                              .toString(),
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'General Sans',
+                                                                color: Color(
+                                                                    0xFF645E82),
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                      ].divide(SizedBox(
+                                                          height: 8.0)),
+                                                    ),
+                                                  ].divide(
+                                                      SizedBox(height: 5.0)),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  );
+                                } else {
+                                  return
+                                      // Empty state
+                                      Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            0.0, 0.0, 0.0, 56.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Container(
+                                                  width: 134.1,
+                                                  height: 81.8,
+                                                  decoration: BoxDecoration(),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    child: Image.asset(
+                                                      'assets/images/Group_599.png',
+                                                      width: double.infinity,
+                                                      height: double.infinity,
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  'You have not added any products to\nyour store front yet. ',
+                                                  textAlign: TextAlign.center,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyLarge
+                                                      .override(
+                                                        fontFamily:
+                                                            'General Sans',
+                                                        color:
+                                                            Color(0xFF424A4A),
+                                                        letterSpacing: 0.0,
+                                                      ),
+                                                ),
+                                              ].divide(SizedBox(height: 20.0)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Container(
+                                                width: 13.0,
+                                                height: 68.0,
+                                                decoration: BoxDecoration(),
+                                                child: ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                  child: Image.asset(
+                                                    'assets/images/Arrow.png',
+                                                    width: double.infinity,
+                                                    height: double.infinity,
+                                                    fit: BoxFit.contain,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // Button that would take them to the "Add_Bank_Account_Page" page, so they can add a new product.
+                                              FFButtonWidget(
+                                                onPressed: () async {
+                                                  context.pushNamed(
+                                                    AddANewProductPageWidget
+                                                        .routeName,
+                                                    queryParameters: {
+                                                      'storeId': serializeParam(
+                                                        homeMainStoresRow.id,
+                                                        ParamType.String,
+                                                      ),
+                                                    }.withoutNulls,
+                                                  );
+                                                },
+                                                text: 'Add Product',
+                                                icon: Icon(
+                                                  Icons.data_saver_on,
+                                                  size: 16.0,
+                                                ),
+                                                options: FFButtonOptions(
+                                                  height: 72.0,
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(32.0, 24.0,
+                                                          32.0, 24.0),
+                                                  iconPadding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(0.0, 0.0,
+                                                              0.0, 0.0),
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  textStyle:
+                                                      FlutterFlowTheme.of(
+                                                              context)
+                                                          .titleSmall
+                                                          .override(
+                                                            fontFamily:
+                                                                'General Sans',
+                                                            color: Colors.white,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                          ),
+                                                  elevation: 0.0,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          40.0),
+                                                ),
+                                              ),
+                                            ].divide(SizedBox(height: 12.0)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                }
+                              },
+                            );
+                          },
+                        ),
+                      ].divide(SizedBox(height: 16.0)),
+                    ),
+                  ),
+
+                  // Conditional that shows either a button or an empty and tiny container. Just to control the visibility of the button.
+                  Align(
+                    alignment: AlignmentDirectional(1.0, 1.0),
+                    child: FutureBuilder<List<ProductsRow>>(
+                      future: (_model.requestCompleter ??=
+                              Completer<List<ProductsRow>>()
+                                ..complete(ProductsTable().queryRows(
+                                  queryFn: (q) => q
+                                      .eqOrNull(
+                                        'store_id',
+                                        homeMainStoresRow.id,
+                                      )
+                                      .eqOrNull(
+                                        'is_active',
+                                        true,
+                                      ),
+                                )))
+                          .future,
+                      builder: (context, snapshot) {
+                        // Customize what your widget looks like when it's loading.
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: SizedBox(
+                              width: 50.0,
+                              height: 50.0,
+                              child: SpinKitWanderingCubes(
+                                color: FlutterFlowTheme.of(context).primary,
+                                size: 50.0,
+                              ),
+                            ),
+                          );
+                        }
+                        List<ProductsRow> conditionalBuilderProductsRowList =
+                            snapshot.data!;
+
+                        return Builder(
+                          builder: (context) {
+                            if ((homeMainStoresRow.storefrontSetupComplete ==
+                                    true) &&
+                                (conditionalBuilderProductsRowList
+                                    .isNotEmpty)) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Button that would take them to the "Add_Bank_Account_Page" page, so they can add a new product.
+                                  Align(
+                                    alignment: AlignmentDirectional(1.0, 1.0),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0.0, 0.0, 20.0, 0.0),
+                                      child: FFButtonWidget(
+                                        onPressed: () async {
+                                          context.pushNamed(
+                                            AddANewProductPageWidget.routeName,
+                                            queryParameters: {
+                                              'storeId': serializeParam(
+                                                homeMainStoresRow.id,
+                                                ParamType.String,
+                                              ),
+                                            }.withoutNulls,
+                                          );
+                                        },
+                                        text: 'Add Product',
+                                        icon: Icon(
+                                          Icons.data_saver_on,
+                                          size: 16.0,
+                                        ),
+                                        options: FFButtonOptions(
+                                          height: 72.0,
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  32.0, 24.0, 32.0, 24.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'General Sans',
+                                                    color: Colors.white,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                          elevation: 0.0,
+                                          borderRadius:
+                                              BorderRadius.circular(40.0),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Container(
+                                width: 1.0,
+                                height: 1.0,
+                                decoration: BoxDecoration(),
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}

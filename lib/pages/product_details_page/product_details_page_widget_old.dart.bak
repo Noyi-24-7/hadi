@@ -1,0 +1,1462 @@
+import '/auth/supabase_auth/auth_util.dart';
+import '/backend/supabase/supabase.dart';
+import '/components/remove_product/remove_product_widget.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_video_player.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import '/flutter_flow/custom_functions.dart' as functions;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'product_details_page_model.dart';
+export 'product_details_page_model.dart';
+
+/// Page to show the product's details, so when they click the product on the
+/// "Home_Main" page they'll be routed here to show the product's details.
+class ProductDetailsPageWidget extends StatefulWidget {
+  const ProductDetailsPageWidget({
+    super.key,
+    required this.productId,
+    this.storeSlug,
+  });
+
+  final String? productId;
+  final StoresRow? storeSlug;
+
+  static String routeName = 'Product_Details_Page';
+  static String routePath = '/productDetailsPage';
+
+  @override
+  State<ProductDetailsPageWidget> createState() =>
+      _ProductDetailsPageWidgetState();
+}
+
+class _ProductDetailsPageWidgetState extends State<ProductDetailsPageWidget> {
+  late ProductDetailsPageModel _model;
+
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _model = createModel(context, () => ProductDetailsPageModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<ProductMediaRow>>(
+      future: ProductMediaTable().queryRows(
+        queryFn: (q) => q
+            .eqOrNull(
+              'product_id',
+              widget.productId,
+            )
+            .order('sort_order', ascending: true),
+      ),
+      builder: (context, snapshot) {
+        // Customize what your widget looks like when it's loading.
+        if (!snapshot.hasData) {
+          return Scaffold(
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: Center(
+              child: SizedBox(
+                width: 50.0,
+                height: 50.0,
+                child: SpinKitWanderingCubes(
+                  color: FlutterFlowTheme.of(context).primary,
+                  size: 50.0,
+                ),
+              ),
+            ),
+          );
+        }
+        List<ProductMediaRow> productDetailsPageProductMediaRowList =
+            snapshot.data!;
+
+        return GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+            FocusManager.instance.primaryFocus?.unfocus();
+          },
+          child: Scaffold(
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            body: SafeArea(
+              top: true,
+              child: FutureBuilder<List<StoresRow>>(
+                future: StoresTable().querySingleRow(
+                  queryFn: (q) => q.eqOrNull(
+                    'owner_id',
+                    currentUserUid,
+                  ),
+                ),
+                builder: (context, snapshot) {
+                  // Customize what your widget looks like when it's loading.
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: SizedBox(
+                        width: 50.0,
+                        height: 50.0,
+                        child: SpinKitWanderingCubes(
+                          color: FlutterFlowTheme.of(context).primary,
+                          size: 50.0,
+                        ),
+                      ),
+                    );
+                  }
+                  List<StoresRow> columnStoresRowList = snapshot.data!;
+
+                  final columnStoresRow = columnStoresRowList.isNotEmpty
+                      ? columnStoresRowList.first
+                      : null;
+
+                  return Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: FutureBuilder<List<ProductsRow>>(
+                          future: ProductsTable().querySingleRow(
+                            queryFn: (q) => q.eqOrNull(
+                              'id',
+                              widget.productId,
+                            ),
+                          ),
+                          builder: (context, snapshot) {
+                            // Customize what your widget looks like when it's loading.
+                            if (!snapshot.hasData) {
+                              return Center(
+                                child: SizedBox(
+                                  width: 50.0,
+                                  height: 50.0,
+                                  child: SpinKitWanderingCubes(
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 50.0,
+                                  ),
+                                ),
+                              );
+                            }
+                            List<ProductsRow> columnProductsRowList =
+                                snapshot.data!;
+
+                            final columnProductsRow =
+                                columnProductsRowList.isNotEmpty
+                                    ? columnProductsRowList.first
+                                    : null;
+
+                            return Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Divider(
+                                        height: 1.0,
+                                        thickness: 1.0,
+                                        color: Color(0xFFEAEDED),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsetsDirectional.fromSTEB(
+                                            20.0, 16.0, 20.0, 16.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            // A clickable row that's supposed to activate the "Side_Menu" component that would be used to navigate to some other pages by the user.
+                                            Expanded(
+                                              child: InkWell(
+                                                splashColor: Colors.transparent,
+                                                focusColor: Colors.transparent,
+                                                hoverColor: Colors.transparent,
+                                                highlightColor:
+                                                    Colors.transparent,
+                                                onTap: () async {
+                                                  scaffoldKey.currentState!
+                                                      .openDrawer();
+                                                },
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  children: [
+                                                    Icon(
+                                                      Icons.menu,
+                                                      color:
+                                                          FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primaryText,
+                                                      size: 24.0,
+                                                    ),
+                                                    Text(
+                                                      'Menu',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .labelLarge
+                                                          .override(
+                                                            fontFamily:
+                                                                'General Sans',
+                                                            color: Color(
+                                                                0xFF1C2626),
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                          ),
+                                                    ),
+                                                  ].divide(
+                                                      SizedBox(width: 8.0)),
+                                                ),
+                                              ),
+                                            ),
+
+                                            // Row containing the user's business name and their pfp or placeholder with the initial/letter avatar.
+                                            Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                // Name
+                                                Text(
+                                                  valueOrDefault<String>(
+                                                    columnProductsRow?.name,
+                                                    'Northing Official',
+                                                  ),
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyLarge
+                                                      .override(
+                                                        fontFamily:
+                                                            'General Sans',
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.w300,
+                                                      ),
+                                                ),
+                                                Container(
+                                                  width: 24.0,
+                                                  height: 24.0,
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFF5CA86),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            24.0),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      // Placeholder with the initial/letter avatar.
+                                                      Text(
+                                                        functions.getInitials(
+                                                            columnStoresRow!
+                                                                .name!),
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodySmall
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              fontSize: 10.0,
+                                                              letterSpacing:
+                                                                  0.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ].divide(SizedBox(width: 8.0)),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Divider(
+                                        height: 1.0,
+                                        thickness: 1.0,
+                                        color: Color(0xFFEAEDED),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 20.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Expanded(
+                                                child: InkWell(
+                                                  splashColor:
+                                                      Colors.transparent,
+                                                  focusColor:
+                                                      Colors.transparent,
+                                                  hoverColor:
+                                                      Colors.transparent,
+                                                  highlightColor:
+                                                      Colors.transparent,
+                                                  onTap: () async {
+                                                    context.safePop();
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  6.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
+                                                        children: [
+                                                          FaIcon(
+                                                            FontAwesomeIcons
+                                                                .chevronLeft,
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryText,
+                                                            size: 14.0,
+                                                          ),
+                                                          Text(
+                                                            'Back',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .labelLarge
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  fontSize:
+                                                                      18.0,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  lineHeight:
+                                                                      1.33,
+                                                                ),
+                                                          ),
+                                                        ].divide(SizedBox(
+                                                            width: 8.0)),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // Button to edit the product's information.
+                                              FFButtonWidget(
+                                                onPressed: () {
+                                                  print('Button pressed ...');
+                                                },
+                                                text: 'Edit',
+                                                icon: Icon(
+                                                  Icons.edit_outlined,
+                                                  size: 16.0,
+                                                ),
+                                                options: FFButtonOptions(
+                                                  height: 32.0,
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(
+                                                          8.0, 4.0, 8.0, 4.0),
+                                                  iconPadding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(0.0, 0.0,
+                                                              0.0, 0.0),
+                                                  color: Color(0x19918D8D),
+                                                  textStyle: FlutterFlowTheme
+                                                          .of(context)
+                                                      .titleSmall
+                                                      .override(
+                                                        fontFamily:
+                                                            'General Sans',
+                                                        color:
+                                                            Color(0xFF171719),
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        lineHeight: 1.0,
+                                                      ),
+                                                  elevation: 0.0,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          8.0),
+                                                ),
+                                              ),
+                                            ]
+                                                .addToStart(
+                                                    SizedBox(width: 20.0))
+                                                .addToEnd(
+                                                    SizedBox(width: 20.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 2.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product Link',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color:
+                                                              Color(0xFF2A3535),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                              ),
+
+                                              // Link to product container.
+                                              Container(
+                                                width: double.infinity,
+                                                decoration: BoxDecoration(
+                                                  color: Color(0xFFFBFBF9),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10.0),
+                                                ),
+                                                child: Padding(
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(10.0, 16.0,
+                                                          10.0, 16.0),
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      // Link to the product that buyers would open on their browser to buy the product.
+                                                      Text(
+                                                        'https://hadi.northing.shop/${widget.storeSlug?.slug}/${columnProductsRow?.id}',
+                                                        style: FlutterFlowTheme
+                                                                .of(context)
+                                                            .bodySmall
+                                                            .override(
+                                                              fontFamily:
+                                                                  'General Sans',
+                                                              color: Color(
+                                                                  0xFF797979),
+                                                              fontSize: 13.0,
+                                                              letterSpacing:
+                                                                  0.0,
+                                                            ),
+                                                      ),
+
+                                                      // Copy button, that would allow merchants to copy and share they link to this product for buyers.
+                                                      FFButtonWidget(
+                                                        onPressed: () async {
+                                                          await Clipboard.setData(
+                                                              ClipboardData(
+                                                                  text:
+                                                                      'https://hadi.northing.shop/${widget.storeSlug?.slug}/${columnProductsRow?.id}'));
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            SnackBar(
+                                                              content: Text(
+                                                                'Copied ✅',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .labelMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'General Sans',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryText,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                    ),
+                                                              ),
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      4000),
+                                                              backgroundColor:
+                                                                  FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .secondaryBackground,
+                                                            ),
+                                                          );
+                                                        },
+                                                        text: 'Copy ',
+                                                        options:
+                                                            FFButtonOptions(
+                                                          padding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      10.0,
+                                                                      5.0,
+                                                                      10.0,
+                                                                      5.0),
+                                                          iconPadding:
+                                                              EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                          color:
+                                                              Color(0xFFF4F0E7),
+                                                          textStyle:
+                                                              FlutterFlowTheme.of(
+                                                                      context)
+                                                                  .titleSmall
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'General Sans',
+                                                                    color: Color(
+                                                                        0xFF2A3535),
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    lineHeight:
+                                                                        1.0,
+                                                                  ),
+                                                          elevation: 0.0,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      8.0),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 0.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // Title of the product.
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 0.0, 48.0, 0.0),
+                                                child: Text(
+                                                  'Black flowing dress, with high slit and neck tie.',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .titleLarge
+                                                      .override(
+                                                        fontFamily:
+                                                            'General Sans',
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                ),
+                                              ),
+
+                                              // Used to contain the image that is currently active from the other images in the listview under, so if the user selects anyone of the images it would reflect on this.
+                                              Expanded(
+                                                child: Builder(
+                                                  builder: (context) {
+                                                    final mediaRows =
+                                                        productDetailsPageProductMediaRowList
+                                                            .toList();
+
+                                                    return Container(
+                                                      width: double.infinity,
+                                                      height: 319.0,
+                                                      child: PageView.builder(
+                                                        physics:
+                                                            const NeverScrollableScrollPhysics(),
+                                                        controller: _model
+                                                                .currentActiveImagePageviewController ??=
+                                                            PageController(
+                                                                initialPage: max(
+                                                                    0,
+                                                                    min(
+                                                                        0,
+                                                                        mediaRows.length -
+                                                                            1))),
+                                                        onPageChanged:
+                                                            (_) async {
+                                                          _model.activeMediaIndex =
+                                                              _model
+                                                                  .currentActiveImagePageviewCurrentIndex;
+                                                          safeSetState(() {});
+                                                        },
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        itemCount:
+                                                            mediaRows.length,
+                                                        itemBuilder: (context,
+                                                            mediaRowsIndex) {
+                                                          final mediaRowsItem =
+                                                              mediaRows[
+                                                                  mediaRowsIndex];
+                                                          return Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              // Conditional to show either a video or image depending on what's been selected.
+                                                              Expanded(
+                                                                child: Builder(
+                                                                  builder:
+                                                                      (context) {
+                                                                    if (mediaRowsItem
+                                                                            .isVideo ==
+                                                                        false) {
+                                                                      return
+                                                                          // Product image
+                                                                          ClipRRect(
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8.0),
+                                                                        child: Image
+                                                                            .network(
+                                                                          functions
+                                                                              .urlToImagePath(mediaRowsItem.publicUrl!),
+                                                                          width:
+                                                                              double.infinity,
+                                                                          height:
+                                                                              200.0,
+                                                                          fit: BoxFit
+                                                                              .contain,
+                                                                        ),
+                                                                      );
+                                                                    } else {
+                                                                      return
+                                                                          // Product video
+                                                                          FlutterFlowVideoPlayer(
+                                                                        path: functions
+                                                                            .urlToVideoPath(mediaRowsItem.publicUrl!),
+                                                                        videoType:
+                                                                            VideoType.network,
+                                                                        width: double
+                                                                            .infinity,
+                                                                        autoPlay:
+                                                                            true,
+                                                                        looping:
+                                                                            true,
+                                                                        showControls:
+                                                                            false,
+                                                                        allowFullScreen:
+                                                                            true,
+                                                                        allowPlaybackSpeedMenu:
+                                                                            false,
+                                                                      );
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                              Container(
+                                                width: double.infinity,
+                                                height: 52.0,
+                                                decoration: BoxDecoration(),
+                                                child:
+                                                    // Listview showing all the product media uploaded for this product.
+                                                    Builder(
+                                                  builder: (context) {
+                                                    final mediaRows2 =
+                                                        productDetailsPageProductMediaRowList
+                                                            .toList();
+
+                                                    return ListView.separated(
+                                                      padding: EdgeInsets.zero,
+                                                      shrinkWrap: true,
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      itemCount:
+                                                          mediaRows2.length,
+                                                      separatorBuilder: (_,
+                                                              __) =>
+                                                          SizedBox(width: 5.0),
+                                                      itemBuilder: (context,
+                                                          mediaRows2Index) {
+                                                        final mediaRows2Item =
+                                                            mediaRows2[
+                                                                mediaRows2Index];
+                                                        return InkWell(
+                                                          splashColor: Colors
+                                                              .transparent,
+                                                          focusColor: Colors
+                                                              .transparent,
+                                                          hoverColor: Colors
+                                                              .transparent,
+                                                          highlightColor: Colors
+                                                              .transparent,
+                                                          onTap: () async {
+                                                            await _model
+                                                                .currentActiveImagePageviewController
+                                                                ?.animateToPage(
+                                                              mediaRows2Index,
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                              curve:
+                                                                  Curves.ease,
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: 57.5,
+                                                            height:
+                                                                double.infinity,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .secondaryBackground,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          2.61),
+                                                              border:
+                                                                  Border.all(
+                                                                color: _model
+                                                                            .activeMediaIndex ==
+                                                                        mediaRows2Index
+                                                                    ? FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .tertiary
+                                                                    : Color(
+                                                                        0x00000000),
+                                                                width: 1.0,
+                                                              ),
+                                                            ),
+                                                            child:
+                                                                // Conditional showing either an image or video player.
+                                                                Builder(
+                                                              builder:
+                                                                  (context) {
+                                                                if (mediaRows2Item
+                                                                        .isVideo ==
+                                                                    false) {
+                                                                  return
+                                                                      // If clicked it would reflect on "Current_Active_Image_Pageview".
+                                                                      ClipRRect(
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            8.0),
+                                                                    child: Image
+                                                                        .network(
+                                                                      functions.urlToImagePath(
+                                                                          mediaRows2Item
+                                                                              .publicUrl!),
+                                                                      width: double
+                                                                          .infinity,
+                                                                      height: double
+                                                                          .infinity,
+                                                                      fit: BoxFit
+                                                                          .contain,
+                                                                    ),
+                                                                  );
+                                                                } else {
+                                                                  return
+                                                                      // If clicked it would reflect on "Current_Active_Image_Pageview".
+                                                                      FlutterFlowVideoPlayer(
+                                                                    path: functions
+                                                                        .urlToVideoPath(
+                                                                            mediaRows2Item.publicUrl!),
+                                                                    videoType:
+                                                                        VideoType
+                                                                            .network,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    height: double
+                                                                        .infinity,
+                                                                    autoPlay:
+                                                                        true,
+                                                                    looping:
+                                                                        true,
+                                                                    showControls:
+                                                                        false,
+                                                                    allowFullScreen:
+                                                                        true,
+                                                                    allowPlaybackSpeedMenu:
+                                                                        false,
+                                                                  );
+                                                                }
+                                                              },
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                ),
+                                              ),
+                                            ].divide(SizedBox(height: 10.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product Price',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+
+                                              // Product Price
+                                              Text(
+                                                'NGN ${valueOrDefault<String>(
+                                                  columnProductsRow?.price
+                                                      .toString(),
+                                                  '45000',
+                                                )}',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color:
+                                                              Color(0xFF1B1A23),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product Description',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+
+                                              // Description of the product.
+                                              Text(
+                                                valueOrDefault<String>(
+                                                  columnProductsRow
+                                                      ?.description,
+                                                  'This isn\'t just any black dress, it\'s an enigma. Crafted from a blend of cotton and slinky satin, it drapes over your curves like a secret, hinting at what lies beneath.',
+                                                ),
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color:
+                                                              Color(0xFF1B1A23),
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                        ),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Available sizes',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+
+                                              // Wrap showing all the sizes of the product.
+                                              FutureBuilder<
+                                                  List<ProductVariantsRow>>(
+                                                future: ProductVariantsTable()
+                                                    .queryRows(
+                                                  queryFn: (q) => q.eqOrNull(
+                                                    'product_id',
+                                                    widget.productId,
+                                                  ),
+                                                ),
+                                                builder: (context, snapshot) {
+                                                  // Customize what your widget looks like when it's loading.
+                                                  if (!snapshot.hasData) {
+                                                    return Center(
+                                                      child: SizedBox(
+                                                        width: 50.0,
+                                                        height: 50.0,
+                                                        child:
+                                                            SpinKitWanderingCubes(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          size: 50.0,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                  List<ProductVariantsRow>
+                                                      wrapProductVariantsRowList =
+                                                      snapshot.data!;
+
+                                                  return Wrap(
+                                                    spacing: 5.0,
+                                                    runSpacing: 0.0,
+                                                    alignment:
+                                                        WrapAlignment.start,
+                                                    crossAxisAlignment:
+                                                        WrapCrossAlignment
+                                                            .start,
+                                                    direction: Axis.horizontal,
+                                                    runAlignment:
+                                                        WrapAlignment.start,
+                                                    verticalDirection:
+                                                        VerticalDirection.down,
+                                                    clipBehavior: Clip.none,
+                                                    children: List.generate(
+                                                        wrapProductVariantsRowList
+                                                            .length,
+                                                        (wrapIndex) {
+                                                      final wrapProductVariantsRow =
+                                                          wrapProductVariantsRowList[
+                                                              wrapIndex];
+                                                      return Container(
+                                                        height: 31.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF0F0F0),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      14.0),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  5.0),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              // Size of the product
+                                                              Text(
+                                                                valueOrDefault<
+                                                                    String>(
+                                                                  wrapProductVariantsRow
+                                                                      .size,
+                                                                  '0',
+                                                                ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'General Sans',
+                                                                      color: Color(
+                                                                          0xFF1B1A23),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }),
+                                                  );
+                                                },
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Available Colours',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+
+                                              // Wrap showing all the colors of the product.
+                                              FutureBuilder<
+                                                  List<ProductVariantsRow>>(
+                                                future: ProductVariantsTable()
+                                                    .queryRows(
+                                                  queryFn: (q) => q.eqOrNull(
+                                                    'product_id',
+                                                    widget.productId,
+                                                  ),
+                                                ),
+                                                builder: (context, snapshot) {
+                                                  // Customize what your widget looks like when it's loading.
+                                                  if (!snapshot.hasData) {
+                                                    return Center(
+                                                      child: SizedBox(
+                                                        width: 50.0,
+                                                        height: 50.0,
+                                                        child:
+                                                            SpinKitWanderingCubes(
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          size: 50.0,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }
+                                                  List<ProductVariantsRow>
+                                                      wrapProductVariantsRowList =
+                                                      snapshot.data!;
+
+                                                  return Wrap(
+                                                    spacing: 5.0,
+                                                    runSpacing: 0.0,
+                                                    alignment:
+                                                        WrapAlignment.start,
+                                                    crossAxisAlignment:
+                                                        WrapCrossAlignment
+                                                            .start,
+                                                    direction: Axis.horizontal,
+                                                    runAlignment:
+                                                        WrapAlignment.start,
+                                                    verticalDirection:
+                                                        VerticalDirection.down,
+                                                    clipBehavior: Clip.none,
+                                                    children: List.generate(
+                                                        wrapProductVariantsRowList
+                                                            .length,
+                                                        (wrapIndex) {
+                                                      final wrapProductVariantsRow =
+                                                          wrapProductVariantsRowList[
+                                                              wrapIndex];
+                                                      return Container(
+                                                        height: 31.0,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color:
+                                                              Color(0xFFF0F0F0),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      14.0),
+                                                        ),
+                                                        child: Padding(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  5.0),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              // Color of the product.
+                                                              Text(
+                                                                valueOrDefault<
+                                                                    String>(
+                                                                  wrapProductVariantsRow
+                                                                      .color,
+                                                                  'Black',
+                                                                ),
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'General Sans',
+                                                                      color: Color(
+                                                                          0xFF1B1A23),
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .normal,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }),
+                                                  );
+                                                },
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product Weight',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Container(
+                                                    height: 31.0,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5.0),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          // The weight of the product.
+                                                          Text(
+                                                            '${columnProductsRow?.weightGrams?.toString()}KG',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF1B1A23),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ].divide(SizedBox(width: 5.0)),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  20.0, 0.0, 20.0, 8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product Quantity Remaining',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primary,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                        ),
+                                              ),
+                                              Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Container(
+                                                    height: 31.0,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              14.0),
+                                                    ),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.all(5.0),
+                                                      child: Column(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          // The Quantity of the product remaining.
+                                                          Text(
+                                                            valueOrDefault<
+                                                                String>(
+                                                              columnProductsRow
+                                                                  ?.stockQuantity
+                                                                  ?.toString(),
+                                                              '0',
+                                                            ),
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'General Sans',
+                                                                  color: Color(
+                                                                      0xFF1B1A23),
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ].divide(SizedBox(width: 5.0)),
+                                              ),
+                                            ].divide(SizedBox(height: 8.0)),
+                                          ),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            // Button that would activate the "Remove _Product" bottom sheet, allowing them to confirm if they want to remove the product.
+                                            Align(
+                                              alignment: AlignmentDirectional(
+                                                  1.0, 1.0),
+                                              child: Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(
+                                                        0.0, 16.0, 0.0, 0.0),
+                                                child: FFButtonWidget(
+                                                  onPressed: () async {
+                                                    await showModalBottomSheet(
+                                                      isScrollControlled: true,
+                                                      backgroundColor:
+                                                          Color(0x52000000),
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return GestureDetector(
+                                                          onTap: () {
+                                                            FocusScope.of(
+                                                                    context)
+                                                                .unfocus();
+                                                            FocusManager
+                                                                .instance
+                                                                .primaryFocus
+                                                                ?.unfocus();
+                                                          },
+                                                          child: Padding(
+                                                            padding: MediaQuery
+                                                                .viewInsetsOf(
+                                                                    context),
+                                                            child:
+                                                                RemoveProductWidget(
+                                                              productId: widget
+                                                                  .productId!,
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                    ).then((value) =>
+                                                        safeSetState(() {}));
+                                                  },
+                                                  text: 'Remove Product',
+                                                  icon: FaIcon(
+                                                    FontAwesomeIcons.trashAlt,
+                                                    size: 16.0,
+                                                  ),
+                                                  options: FFButtonOptions(
+                                                    height: 40.0,
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(16.0, 0.0,
+                                                                16.0, 0.0),
+                                                    iconAlignment:
+                                                        IconAlignment.end,
+                                                    iconPadding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(0.0, 0.0,
+                                                                0.0, 0.0),
+                                                    iconColor:
+                                                        Color(0xFF652424),
+                                                    color: Color(0x7BFDE0E6),
+                                                    textStyle: FlutterFlowTheme
+                                                            .of(context)
+                                                        .labelSmall
+                                                        .override(
+                                                          fontFamily:
+                                                              'General Sans',
+                                                          color:
+                                                              Color(0xFF652424),
+                                                          fontSize: 14.0,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                    elevation: 0.0,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            24.0),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ]
+                                          .divide(SizedBox(height: 16.0))
+                                          .addToEnd(SizedBox(height: 80.0)),
+                                    ),
+                                  ),
+                                ),
+                              ].divide(SizedBox(height: 16.0)),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
